@@ -28,18 +28,23 @@ export default {
     }
   }, methods: {
     deleteSmoothie(id) {
-      this.smoothies = this.smoothies.filter(smoothie => {
-        return smoothie.id !== id
-      });
+      // delete dog from firestore
+     db.collection('smoothies').doc(id).delete()
+       .then(() => {
+         // update the frontend
+          this.smoothies = this.smoothies.filter(smoothie => {
+            return smoothie.id !== id;
+          });
+       });
     }
   },
   created(){
     // fetch data from firestore
     db.collection('smoothies').get()
       .then(snapshot => {
-        snapshot.forEach(document => {
-          let smoothie = document.data();
-          smoothie.id = document.id;
+        snapshot.forEach(doc => {
+          let smoothie = doc.data();
+          smoothie.id = doc.id;
           this.smoothies.push(smoothie);
         });
       });
